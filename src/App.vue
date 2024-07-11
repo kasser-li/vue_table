@@ -5,7 +5,8 @@
       <router-link to="/about">About</router-link> | 
       <router-link to="/sorTree">sorTree</router-link> |
       <router-link to="/sorTable">sorTable</router-link> |
-      <router-link to="/sorTableAI">sorTableAI</router-link>
+      <router-link to="/sorTableAI">sorTableAI</router-link> |
+      <router-link to="/draggableTable">draggableTable</router-link>
       
     </nav>
     <router-view/>

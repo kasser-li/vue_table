@@ -33,6 +33,12 @@ const routes = [
     name: 'sorTableAI',
     component: () => import(/* webpackChunkName: "about" */ '../views/sorTableAI.vue')
   },
+  {
+    path: '/draggableTable',
+    name: 'draggableTable',
+    component: () => import(/* webpackChunkName: "about" */ '../views/draggableTable.vue')
+  },
+  
 ]
 
 
