@@ -1,21 +1,24 @@
 <template>
   <div class="draggable" style="padding: 20px">
-      <div class="n-dragTb" ref="tbBox">
-    <el-table ref="sortableTable" row-key="id" :data="treeData"  style="width: 100%">
-        <el-table-column  width="100" ></el-table-column>
-      <el-table-column label="姓名" prop="name"></el-table-column>
-      <el-table-column label="年龄" prop="age"></el-table-column>
-        <el-table-column label="拖拽" width="100" >
-            <template #default="{row}">
-          <!-- <span :ref="el=>initRow(el,row)"><el-icon class="draggableIcon"><Rank /></el-icon></span> -->
-          <span v-ref="({el})=>initRow(el,row)"><i class="el-icon-s-operation draggableIcon"></i></span>
-          
-            </template>
-        </el-table-column>
-        
+    <el-button @click="getTableData">打印表格数据</el-button>
+    <el-button @click="addItem">新增一级节点</el-button>
+    <el-table ref="sortableTable" row-key="id" border :data="tableData" :key="tableKey" style="width: 100%"
+      :tree-props="{ children: 'children' }">
+      <!-- <el-table-column width="50" align="center"></el-table-column> -->
+      <el-table-column label="字段标签" prop="labelCurrent"></el-table-column>
+      <el-table-column label="字段名" prop="labelName" align="center"></el-table-column>
+
+      <el-table-column label="操作" width="100" align="center">
+        <template slot-scope="scope">
+          <span style="cursor:pointer;color:#100DB1 " @click="addItem(scope['row'], scope)">{{ '新增子节点' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="拖拽" width="60" align="center">
+        <template slot-scope="scope">
+          <i class="el-icon-s-operation draggableIcon" title="拖拽"></i>
+        </template>
+      </el-table-column>
     </el-table>
-    <div class="n-dragTb-line" :style="{left:line.x+'px', top: line.y+'px'}" v-show="line.show"></div>
-  </div>
   </div>
 </template>
 <script>
@@ -23,281 +26,504 @@ import Sortable from 'sortablejs';
 
 export default {
   mounted() {
-  window.vm = this;
-      this.rowDrop()
-   
+    this.rowDrop()
   },
   data() {
-      return {
-    line:{
-      type: null,
-      center: null,
-      show:false,
-      x:9999,
-      y:9999,
-    },
-          treeData: [
-              {
-                  id: 1,
-                  level: 1,
-                  name: '李一',
-                  gender: '男',
-                  age: 30,
-                  job: "会计",
-                  children: [{
-                      id: 31,
-                      level: 2,
-                      name: '李一1',
-                      gender: '2016-05-01',
-                      age: '31',
-                      job: '上海市普陀区金沙江路 1519 弄',
-                  }, {
-                      id: 32,
-                      name: '李一2',
-                      level: 2,
-                      gender: '2016-05-01',
-                      age: '32',
-                      job: '上海市普陀区金沙江路 1519 弄'
-                  }]
-              },
-              {
-                  level: 1,
-                  id: 2,
-                  name: '王二',
-                  gender: '未知',
-                  age: 18,
-                  job: "无业游民"
-              },
-              {
-                  id: 3,
-                  name: '张三',
-                  gender: '男',
-                  age: 50,
-                  job: "老板",
-                  level: 1,
-                  children: [
+    return {
+      tableKey: 0,
+      activeRows: [],
+      tableData: [
+        {
+          id: 1,
+          parentID: null,
+          level: 1,
+          labelCurrent: '1',
+          labelName: 'labelName',
+          gender: '男',
+          age: 30,
+          job: "会计",
+          children: [
+            {
+              id: 11,
+              parentID: 1,
+              level: 2,
+              labelCurrent: '11',
+              labelName: 'labelName',
+              gender: '2016-05-01',
+              age: '王小虎',
+              job: '上海市普陀区金沙江路 1519 弄',
+            }, {
+              id: 12,
+              parentID: 1,
+              labelCurrent: '12',
+              labelName: 'labelName',
+              level: 2,
+              gender: '2016-05-01',
+              age: '王小虎',
+              job: '上海市普陀区金沙江路 1519 弄'
+            }
+          ]
+        },
+        {
+          id: 2,
+          parentID: null,
+          level: 1,
+          labelCurrent: '2',
+          labelName: 'labelName',
+          gender: '男',
+          age: 30,
+          job: "会计",
+          children: [
+            {
+              id: 21,
+              parentID: 2,
+              level: 2,
+              labelCurrent: '21',
+              labelName: 'labelName',
+              gender: '2016-05-01',
+              age: '王小虎',
+              job: '上海市普陀区金沙江路 1519 弄',
+            }, {
+              id: 22,
+              parentID: 2,
+              labelCurrent: '22',
+              labelName: 'labelName',
+              level: 2,
+              gender: '2016-05-01',
+              age: '王小虎',
+              job: '上海市普陀区金沙江路 1519 弄'
+            }
+          ]
+        },
+        {
+          id: 3,
+          parentID: null,
+          level: 1,
+          labelCurrent: '3',
+          labelName: 'labelName',
+          gender: '男',
+          age: 30,
+          job: "会计",
+          children: [
+          ]
+        },
+        {
+          id: 4,
+          parentID: null,
+          level: 1,
+          labelCurrent: '4',
+          labelName: 'labelName',
+          gender: '男',
+          age: 30,
+          job: "会计",
+          children: [
+          ]
+        },
+      ],
+      tableConfig: {
+        tableItems: [
           {
-            id: 321,
-            level: 2,
-            name: '张三1',
-            gender: '2016-05-01',
-            age: '王小虎',
-            job: '上海市普陀区金沙江路 1519 弄',
-            children: [
-              {
-                id: 555,
-                level: 3,
-                name: '张三1  3级',
-                gender: '2016-05-01',
-                age: '21',
-                job: '上海市普陀区金沙江路 1519 弄'
-              }],
-            
-          }, {
-            id: 322,
-            level: 2,
-            name: '张三2',
-            gender: '2016-05-01',
-            age: '22',
-            job: '上海市普陀区金沙江路 1519 弄'
+            label: '字段标签',
+            prop: 'labelCurrent',
+          },
+          {
+            label: '字段名',
+            prop: 'labelName',
+          },
+          {
+            label: '性别',
+            prop: 'gender',
+          },
+          {
+            label: '年龄',
+            prop: 'age',
+          },
+          {
+            label: '工作',
+            prop: 'job',
           },
         ]
-              },
-          ],
-         
-      }
-  },
-directives:{
-  'ref':{
-    bind(el, binding, vNode) {
-      binding.value({el,binding, vm: vNode && vNode.componentInstance, vNode});
-    },
-    componentUpdated(el, binding, vNode, oldVNode){
-      binding.value({el,binding, vm: vNode && vNode.componentInstance, vNode, oldVNode});
-    },
-    beforeMount(el, binding, vNode) {
-      binding.value({el,binding, vm: vNode && vNode.componentInstance, vNode});
-    },
-    updated(el, binding, vNode, oldVNode){
-      binding.value({el,binding, vm: vNode && vNode.componentInstance, vNode, oldVNode});
-    }
-  }
-},
- 
-  methods: {
-  // 初始化每个可拖动的行
-  async initRow(el,row){
-    await this.$nextTick()
-    await this.$nextTick()
-    const btn = el;
-    while(el){
-      if(el.classList.contains('el-table__row')) break;
-      el = el.parentElement;
-    }
-    el && this.sortVm && this.sortVm.onInitRow(el,btn,row);
-  },
-  // 行拖拽
-      rowDrop() {
-    // 获取表格节点
-    const el = this.$refs.sortableTable && this.$refs.sortableTable.$el.querySelector('.el-table__body-wrapper tbody')
-    if (!el) return;
-    
-    // 为数据建立关联关系
-    this.treeData.forEach(v=> v._parent = { id: 'root', level:0, children: this.treeData  });
-    const arr = [...this.treeData];
-    while(arr.length){
-      const v = arr.shift();
-      if(v.children) arr.push(...v.children.map(c=> (c._parent = v, c.level = v.level + 1,  c)));
-    }
-    
-    const inden = 20;		//子级缩进
-    
-    
-    
-    
-    // 调用sortable函数
-    const sortVm = this.sortVm = Sortable.create(el, {
-        animation: 0,
-      sort:false,
-      direction: 'vertical',
-        handle: '.draggableIcon',
-      draggable:'.el-table__row',
-    })
-    el.removeEventListener('pointerdown',sortVm._onTapStart);
-    
-    
-    let dragRow;		//当前拖动的元素
-    // 拖动结束后取消那个蓝色的校准线，清空当前拖动的元素
-    el.ondragend = ()=> {
-      const {line} = this;
-      el.style.userSelect = '';
-      if(!dragRow) return;
-      dragRow.draggable = false;
-      dragRow = false;
-      if(line.center) line.center._el.style.background = '';
-      line.center = line.type = line.show = false;
-    }
-    sortVm.onStart = el=> {
-      // 开始拖动
-      el.style.userSelect = 'none';
-      (dragRow = el).draggable = true;
-    }
-    // 拖动过程中
-    sortVm.onMove = (tg,e) =>{
-      const {line,$refs:{tbBox}} = this;
-      e.preventDefault();
-      if(line.center) line.center._el.style.background = '';
-      line.center = line.type = line.show = false;
-      
-      if(!dragRow || dragRow === tg || !dragRow._row || !tg._row ) return;
-      const a = dragRow._row;
-      const b = tg._row;
-      
-      const { clientY:my } = e;
-      const {y,height:h,x} = tg.getBoundingClientRect();
-      const {x:px,y:py} = tbBox.getBoundingClientRect();
-      
-      let type;
-      if(my - y <= 3) type = 'top';
-      else if(my >= y + h - 3 ) type = 'bottom'
-      else type = 'center';
-      
-      if( type === 'center' &&  this.isChild(a,b)) return; 
-      if( type === 'bottom' &&  a._parent === b) return; 
-      
-      line.type = type;
-      
-      if(type === 'center') return (line.center = b)._el.style.background = 'rgba(0,0,0,0.05)';
-      
-      line.show = true;
-      line.x = x - px + inden * (b.level - 1);
-      line.y = (type === 'top' ? y + 2 : y + h - 2) - py;  
-      
-    }
-    // 拖动结束
-    sortVm.onEnd = tg =>{
-      const {line} = this;
-      const {type} = line;
-      if(line.center) line.center._el.style.background = '';
-      line.center = line.type = line.show = false;
-      if(!dragRow || dragRow === tg || !dragRow._row || !tg._row) return;
-      const a = dragRow._row;
-      const b = tg._row;
-    
-      if( type === 'center' &&  this.isChild(a,b)) return;
-      if( type === 'bottom' &&  a._parent === b) return;
-      
-      const aIdx = a._parent.children.indexOf(a);
-      a._parent.children.splice(aIdx,1);
-      
-      const bIdx = b._parent.children.indexOf(b);
-      
-      if(type === 'top') b._parent.children.splice(bIdx,0,a);
-      if(type === 'center'){
-        b.children = b.children || [];
-        a._parent = b;
-        a.level = b.level + 1;
-        b.children.push(a)
-      }
-      if(type === 'bottom') b._parent.children.splice(bIdx+1,0,a);
-      
-      b._parent.children.forEach(v=> (v._parent = b._parent, v.level = b.level));
-      
-    }
-    sortVm.onInitRow = (el,btn,row)=>{
-      el._row = row;
-      row._el = el;
-      btn.onmousedown = e=>sortVm.onStart(el,e);
-      el.ondrop = e=>sortVm.onEnd(el,e);
-      el.ondragover = e=>sortVm.onMove(el,e);
-       
-    }
       },
-  
-  isChild(a,b){
-    return (this.getTreePath({data: this.treeData, id: a.id}) || []).some(v=> v.id === b.id);
-  },
-  getTreePath({ data = [], id,  checkFunc, props,    format, paths = []  }){
-    props = { children: 'children', id: 'id', ...(props || {}) };
-    for(const c of data){
-      if( checkFunc ? checkFunc({ id,item:c,data, props, paths }) : c[ props.id ] === id ) return (paths.push(format ?  format( {id,item:c,data, props, paths } ) : c), paths);
-      if(!c[ props.children ]) continue;
-      paths.push(format ?  format( {id,item:c,data, props, paths } ) : c);
-      const res = this.getTreePath({ data: c[ props.children ]  ,id, checkFunc, props,  format,  paths });
-      if(res) return res;
-      paths.pop();
+      baseIndex: 100,
     }
-    return false;
   },
-  
-  
-  
-  
-  
-  
-  
-
-  getUuiD(randomLength) {
+  methods: {
+    getTableData() {
+      console.log(this.tableData);
+    },
+    getUuiD(randomLength) {
       return Number(Math.random().toString().substr(2, randomLength) + Date.now()).toString(36)
-  },
-  
+    },
+    //   获取目标元素的父元素和目标元素的索引
+    getItemParentAndIndex(arr, item) {
+
+      let parent = null
+      let index = -1
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].id === item.id) {
+          parent = arr[i]
+          index = i
+          break
+        }
+        if (Array.isArray(arr[i].children)) {
+          let res = this.getItemParentAndIndex(arr[i].children, item)
+          if (res[1] > -1) {
+            parent = res[0]
+            index = res[1]
+          }
+        }
+      }
+      // debugger
+      return [parent, index]
+    },
+
+    // 添加二级
+    addItem(r, scope) {
+      console.log('scope', scope);
+      let data = {
+        id: this.getUuiD(),
+        parentID: null,
+        level: null,
+        labelCurrent: '节点' + this.baseIndex,
+        labelName: 'labelName',
+        gender: '2016-05-01',
+        age: '王小虎',
+        job: '上海市普陀区金沙江路 1519 弄',
+      }
+      //   获取目标元素的父元素和目标元素的索引
+      let [parent, index] = this.getItemParentAndIndex(this.tableData, r)
+      if (index > -1) {
+        data.level = parent.level + 1
+        if (parent.hasOwnProperty('children')) {
+          parent.children.push(data)
+        } else {
+          parent['children'] = [{ ...data }]
+        }
+      } else {
+        data.level = 1
+        this.tableData.push(data)
+      }
+      //   let idx = this.tableData.findIndex(e => e.id === r.id)
+      //   if (idx > -1) {
+      //       let item = this.tableData[idx]
+      //       if (item.hasOwnProperty('children')) {
+      //           item.children.push(data)
+      //       } else {
+      //           item['children'] = [{ ...data }]
+      //       }
+      //   }
+      this.baseIndex++
+      this.tableData = [...this.tableData]
+    },
+    // 行拖拽
+    rowDrop() {
+      // 获取表格节点
+      // this.tableSortDestroy()
+      this.$nextTick(() => {
+        const el = this.$refs.sortableTable.$el.querySelector('.el-table__body-wrapper tbody')
+        if (!el) { return }
+        const _this = this
+        // 插件调用函数
+        Sortable.create(el, {
+          animation: 300,
+          handle: '.draggableIcon',
+          onMove({ dragged, related }) {
+            console.log({ dragged, related });
+            _this.$set(_this, 'activeRows', _this.treeToTile(_this.tableData)) // 把树形的结构转为列表再进行拖拽
+          },
+          onEnd({ oldIndex, newIndex }) {
+            console.log({ oldIndex, newIndex });
+            
+            const oldRow = _this.activeRows[oldIndex] // 移动的那个元素
+            const newRow = _this.activeRows[newIndex] // 新的元素
+            // console.log([ {id:oldRow.id,level:oldRow.level}, {id:newRow.id,level:newRow.level}]);
+            console.log([ oldRow.level,newRow.level]);
+            if (oldIndex !== newIndex && oldRow.id !== newRow.id) {
+              // const modelProperty = _this.activeRows[oldIndex]
+              const modelProperty = {...oldRow,level:newRow.level}
+
+              const changeIndex = newIndex - oldIndex
+              // const index = _this.activeRows.indexOf(modelProperty)
+              const index = _this.activeRows.findIndex(e=> e.id == modelProperty.id)
+              
+
+              _this.activeRows.splice(index, 1)
+              _this.activeRows.splice(index + changeIndex, 0, modelProperty)
+              
+              let lastNodeIndex = index + changeIndex 
+              console.log('index + changeIndex',lastNodeIndex,_this.activeRows[lastNodeIndex]);
+              if(modelProperty.level == 1){
+                _this.activeRows[lastNodeIndex].parentID = null
+              }else{
+                // 在 activeRows 中找到 modelProperty最近的父级节点
+                let parentLevel = modelProperty.level - 1
+                let parentNode = _this.activeRows.findLast((e,eIndex)=>{return e.level == parentLevel && eIndex<lastNodeIndex})
+                _this.activeRows[lastNodeIndex].parentID = parentNode.id
+              }
+              let ar = []
+              _this.activeRows.map(e => {
+                ar.push(e.id)
+              })
+              console.log(_this.activeRows);
+              console.log(ar);
+              
+              _this.sortMenuData()
+              if (oldRow.level === newRow.level && oldRow.level === 1) {
+                // // 一级之间的拖拽
+                // if (index < 0) {
+                //     console.log('index < 0')
+                //     return
+                // }
+                // _this.activeRows.splice(index, 1)
+                // _this.activeRows.splice(index + changeIndex, 0, modelProperty)
+                // _this.sortMenuData('1-1')
+              } else if (oldRow.level === newRow.level && oldRow.level === 2) {
+                // // 二级之间的拖拽
+                // // _this.activeRows.splice(index, 1)
+                // let res = [];
+                // _this.tableData.forEach(t => {
+                //     if (t.hasOwnProperty('children')) {
+                //         // 在原来的一级下删除二级
+                //         let oldChildIndex = t.children.findIndex(c => c.id === oldRow.id)
+                //         if (oldChildIndex > -1) {
+                //             t.children.splice(oldChildIndex, 1)
+                //         }
+                //         // 在新的一级下添加二级
+                //         let newChildIndex = t.children.findIndex(c => c.id === newRow.id)
+                //         if (newChildIndex > -1) {
+                //             t.children = [...t.children.slice(0, newChildIndex), oldRow, ...t.children.slice(newChildIndex)]
+                //         }
+                //     }
+                //     res.push(t)
+                //     _this.tableData = res
+                // })
+                // _this.tableKey = Math.random()
+                // _this.rowDrop()
+              } else if (oldRow.level === 2 && newRow.level === 1) {
+                // // 二级移动到一级
+                // // console.log('2-1', oldRow, newRow)
+                // let res = [];
+                // _this.tableData.forEach(t => {
+                //     if (t.hasOwnProperty('children')) {
+                //         // 在原来的一级下删除二级
+                //         let oldChildIndex = t.children.findIndex(c => c.id === oldRow.id)
+                //         if (oldChildIndex > -1) {
+                //             t.children.splice(oldChildIndex, 1)
+                //         }
+                //     }
+                //     // 将提升为一级的二级放到相应位置
+                //     let item = { ...oldRow, level: 1 }
+                //     if (t.id === newRow.id) {
+                //         res.push(t, item)
+                //     } else {
+                //         res.push(t)
+                //     }
+                //     _this.tableData = res
+                // })
+                // _this.tableKey = Math.random()
+                // _this.rowDrop()
+              } else if (oldRow.level === 1 && newRow.level === 2) {
+                // // 一级移动到二级
+                // console.log('1-2', oldRow, newRow)
+                // let res = [];
+
+                // let item = [{ ...oldRow, level: 2 }]
+                // if (oldRow.hasOwnProperty('children')) {
+                //     item = [...item, ...oldRow.children]
+                //     delete item[0].children
+                // }
+                // _this.tableData.forEach(t => {
+                //     // 将降为二级的目标以及他的children放到相应的位置
+                //     if (t.hasOwnProperty('children')) {
+                //         let newChildIndex = t.children.findIndex(c => c.id === newRow.id)
+                //         if (newChildIndex > -1) {
+                //             t.children = [...t.children.slice(0, newChildIndex), ...item, ...t.children.slice(newChildIndex)]
+                //         }
+                //     }
+                //     if (t.id !== oldRow.id) {
+                //         res.push(t)
+                //     }
+                // })
+                // _this.tableData = res
+                // _this.tableKey = Math.random()
+                // _this.rowDrop()
+              }
+
+              // if (oldRow.level === newRow.level && oldRow.level === 1) {
+              //     // 一级之间的拖拽
+              //     if (index < 0) {
+              //         console.log('index < 0')
+              //         return
+              //     }
+              //     _this.activeRows.splice(index, 1)
+              //     _this.activeRows.splice(index + changeIndex, 0, modelProperty)
+              //     _this.sortMenuData('1-1')
+              // } else if (oldRow.level === newRow.level && oldRow.level === 2) {
+              //     // 二级之间的拖拽
+              //     // _this.activeRows.splice(index, 1)
+              //     let res = [];
+              //     _this.tableData.forEach(t => {
+              //         if (t.hasOwnProperty('children')) {
+              //             // 在原来的一级下删除二级
+              //             let oldChildIndex = t.children.findIndex(c => c.id === oldRow.id)
+              //             if (oldChildIndex > -1) {
+              //                 t.children.splice(oldChildIndex, 1)
+              //             }
+              //             // 在新的一级下添加二级
+              //             let newChildIndex = t.children.findIndex(c => c.id === newRow.id)
+              //             if (newChildIndex > -1) {
+              //                 t.children = [...t.children.slice(0, newChildIndex), oldRow, ...t.children.slice(newChildIndex)]
+              //             }
+              //         }
+              //         res.push(t)
+              //         _this.tableData = res
+              //     })
+              //     _this.tableKey = Math.random()
+              //     _this.rowDrop()
+              // } else if (oldRow.level === 2 && newRow.level === 1) {
+              //     // 二级移动到一级
+              //     // console.log('2-1', oldRow, newRow)
+              //     let res = [];
+              //     _this.tableData.forEach(t => {
+              //         if (t.hasOwnProperty('children')) {
+              //             // 在原来的一级下删除二级
+              //             let oldChildIndex = t.children.findIndex(c => c.id === oldRow.id)
+              //             if (oldChildIndex > -1) {
+              //                 t.children.splice(oldChildIndex, 1)
+              //             }
+              //         }
+              //         // 将提升为一级的二级放到相应位置
+              //         let item = { ...oldRow, level: 1 }
+              //         if (t.id === newRow.id) {
+              //             res.push(t, item)
+              //         } else {
+              //             res.push(t)
+              //         }
+              //         _this.tableData = res
+              //     })
+              //     _this.tableKey = Math.random()
+              //     _this.rowDrop()
+              // } else if (oldRow.level === 1 && newRow.level === 2) {
+              //     // 一级移动到二级
+              //     console.log('1-2', oldRow, newRow)
+              //     let res = [];
+
+              //     let item = [{ ...oldRow, level: 2 }]
+              //     if (oldRow.hasOwnProperty('children')) {
+              //         item = [...item, ...oldRow.children]
+              //         delete item[0].children
+              //     }
+              //     _this.tableData.forEach(t => {
+              //         // 将降为二级的目标以及他的children放到相应的位置
+              //         if (t.hasOwnProperty('children')) {
+              //             let newChildIndex = t.children.findIndex(c => c.id === newRow.id)
+              //             if (newChildIndex > -1) {
+              //                 t.children = [...t.children.slice(0, newChildIndex), ...item, ...t.children.slice(newChildIndex)]
+              //             }
+              //         }
+              //         if (t.id !== oldRow.id) {
+              //             res.push(t)
+              //         }
+              //     })
+              //     _this.tableData = res
+              //     _this.tableKey = Math.random()
+              //     _this.rowDrop()
+              // }
+            }
+          }
+        })
+      })
+    },
+    // sortMenuData(type) {
+    //     if (type === '1-1') {
+    //         let res = []
+    //         this.activeRows.forEach(r => {
+    //             if (r.level === 1) {
+    //                 let itemIdx = this.tableData.findIndex(t => t.id === r.id)
+    //                 if (itemIdx > -1) {
+    //                     res.push({ ...this.tableData[itemIdx] })
+    //                 }
+    //             }
+    //         })
+    //         this.tableData = res
+    //     }
+    //     this.tableKey = Math.random()  //狠狠的刷新dom
+    //     this.rowDrop() // 再把拖拽的功能塞入
+    // },
+
+    buildTree(arrs) {
+      // 创建一个字典以便快速查找
+      const map = new Map();
+      const result = [];
+
+      // 将每个元素添加到字典中，key 为 id
+      arrs.forEach(item => {
+        map.set(item.id, { ...item, children: [] });
+      });
+
+      // 遍历每个元素，将其添加到相应的 parent 的 children 中
+      arrs.forEach(item => {
+        const node = map.get(item.id);
+        if (item.parentID !== null) {
+          const parentNode = map.get(item.parentID);
+          if (parentNode) {
+            // console.log(parentNode, 'parentNode');
+            node.parentID = parentNode.id
+            parentNode.children.push(node);
+          }
+        } else {
+          result.push(node);
+        }
+      });
+
+      return result;
+    },
+    sortMenuData() {
+      // let res = []
+      // this.activeRows.forEach(r => {
+      //   if (r.level === 1) {
+      //     let itemIdx = this.tableData.findIndex(t => t.id === r.id)
+      //     if (itemIdx > -1) {
+      //       res.push({ ...this.tableData[itemIdx] })
+      //     }
+      //   }
+      // })
+      // this.tableData = res
+      // console.log(this.activeRows);
+      // let ar = []
+      // this.activeRows.map(e => {
+      //   ar.push(e.id)
+      // })
+      // console.log(ar);
+      let arrs = this.buildTree(this.activeRows)
+      console.log(arrs);
+      this.tableData = arrs
+      this.tableKey = Math.random()  //狠狠的刷新dom
+      this.rowDrop() // 再把拖拽的功能塞入
+    },
+
+    treeToTile(treeData, childKey = 'children') { // 将树数据转化为平铺数据
+      const arr = []
+      const expanded = data => {
+        if (data && data.length > 0) {
+          data.filter(d => d).forEach(e => {
+            const child = e[childKey]
+            // e[childKey] = []
+            arr.push(e)
+            expanded(child || [])
+          })
+        }
+      }
+      expanded(treeData)
+      // console.log('treeToTile', arr)
+      return arr
+    },
   }
 }
 </script>
-<!-- <style scoped lang="scss">
-
-.n-dragTb{
-  position: relative;
-  .n-dragTb-line{
-    left: 0;
-    right: 0;
-    pointer-events: none;
-    height: 1px;
-    position: absolute;
-    background: #4095ff;
-  }
+<style scoped >
+.draggableIcon {
+  cursor: pointer;
 }
-::v-deep.el-table__row--level-1 {
-  background: #F5F5FC;
-}
-</style> -->
+</style>

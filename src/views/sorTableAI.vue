@@ -1,7 +1,7 @@
 <template>
     <div class="draggable" style="padding: 20px">
-        <button @click="getTableData">打印表格数据</button>
-        <button @click="addItem">新增一级节点</button>
+        <el-button @click="getTableData">打印表格数据</el-button>
+        <el-button @click="addItem">新增一级节点</el-button>
         <el-table ref="sortableTable" row-key="id" border :data="tableData" :key="tableKey" style="width: 100%"
             :tree-props="{ children: 'children' }">
             <!-- <el-table-column width="50" align="center"></el-table-column> -->
@@ -45,12 +45,14 @@ export default {
                         id: 31,
                         level: 2,
                         labelCurrent: '李一1',
+                        labelName: 'labelName',
                         gender: '2016-05-01',
                         age: '王小虎',
                         job: '上海市普陀区金沙江路 1519 弄',
                     }, {
                         id: 32,
                         labelCurrent: '李一2',
+                        labelName: 'labelName',
                         level: 2,
                         gender: '2016-05-01',
                         age: '王小虎',
