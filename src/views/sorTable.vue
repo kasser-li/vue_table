@@ -2,19 +2,15 @@
   <div class="draggable" style="padding: 20px">
     <el-button @click="getTableData">打印表格数据</el-button>
     <el-button @click="addItem">新增一级节点</el-button>
-    <el-table ref="sortableTable" row-key="id" border :data="tableData" :key="tableKey" style="width: 100%"
+    <el-table ref="sortableTable" row-key="id" border :data="tableData" :key="tableKey" style="width: 100%;margin-top: 20px">
       :tree-props="{ children: 'children' }">
       <!-- <el-table-column width="50" align="center"></el-table-column> -->
       <el-table-column label="字段标签" prop="labelCurrent"></el-table-column>
       <el-table-column label="字段名" prop="labelName" align="center"></el-table-column>
 
-      <el-table-column label="操作" width="100" align="center">
+      <el-table-column label="操作" width="150" align="center">
         <template slot-scope="scope">
-          <span style="cursor:pointer;color:#100DB1 " @click="addItem(scope['row'], scope)">{{ '新增子节点' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="拖拽" width="60" align="center">
-        <template slot-scope="scope">
+          <span style="cursor:pointer;color:#100DB1;margin-right: 20px;" @click="addItem(scope['row'], scope)">{{ '新增子节点' }}</span>
           <i class="el-icon-s-operation draggableIcon" title="拖拽"></i>
         </template>
       </el-table-column>
@@ -33,37 +29,38 @@ export default {
       tableKey: 0,
       activeRows: [],
       tableData: [
-        {
-          id: 1,
-          parentID: null,
-          level: 1,
-          labelCurrent: '1',
-          labelName: 'labelName',
-          gender: '男',
-          age: 30,
-          job: "会计",
-          children: [
-            {
-              id: 11,
-              parentID: 1,
-              level: 2,
-              labelCurrent: '11',
-              labelName: 'labelName',
-              gender: '2016-05-01',
-              age: '王小虎',
-              job: '上海市普陀区金沙江路 1519 弄',
-            }, {
-              id: 12,
-              parentID: 1,
-              labelCurrent: '12',
-              labelName: 'labelName',
-              level: 2,
-              gender: '2016-05-01',
-              age: '王小虎',
-              job: '上海市普陀区金沙江路 1519 弄'
-            }
-          ]
-        },
+        // {
+        //   id: 1,
+        //   parentID: null,
+        //   level: 1,
+        //   labelCurrent: '1',
+        //   labelName: 'labelName',
+        //   gender: '男',
+        //   age: 30,
+        //   job: "会计",
+        //   children: [
+        //     {
+        //       id: 11,
+        //       parentID: 1,
+        //       level: 2,
+        //       labelCurrent: '11',
+        //       labelName: 'labelName',
+        //       gender: '2016-05-01',
+        //       age: '王小虎',
+        //       job: '上海市普陀区金沙江路 1519 弄',
+        //     },
+        //      {
+        //       id: 12,
+        //       parentID: 1,
+        //       labelCurrent: '12',
+        //       labelName: 'labelName',
+        //       level: 2,
+        //       gender: '2016-05-01',
+        //       age: '王小虎',
+        //       job: '上海市普陀区金沙江路 1519 弄'
+        //     }
+        //   ]
+        // },
         {
           id: 2,
           parentID: null,
@@ -107,18 +104,18 @@ export default {
           children: [
           ]
         },
-        {
-          id: 4,
-          parentID: null,
-          level: 1,
-          labelCurrent: '4',
-          labelName: 'labelName',
-          gender: '男',
-          age: 30,
-          job: "会计",
-          children: [
-          ]
-        },
+        // {
+        //   id: 4,
+        //   parentID: null,
+        //   level: 1,
+        //   labelCurrent: '4',
+        //   labelName: 'labelName',
+        //   gender: '男',
+        //   age: 30,
+        //   job: "会计",
+        //   children: [
+        //   ]
+        // },
       ],
       tableConfig: {
         tableItems: [
@@ -183,7 +180,7 @@ export default {
       console.log('scope', scope);
       let data = {
         id: this.getUuiD(),
-        parentID: null,
+        parentID: scope.row.id,
         level: null,
         labelCurrent: '节点' + this.baseIndex,
         labelName: 'labelName',
